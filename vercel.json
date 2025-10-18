@@ -1,4 +1,5 @@
 {
+  "name": "careers_page_builder",
   "buildCommand": "npm run build",
   "outputDirectory": ".next",
   "framework": "nextjs",
