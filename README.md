@@ -2,6 +2,9 @@
 
 A complete MVP for building branded careers pages. Recruiters can customize company branding, manage content sections, and post jobs. Candidates can browse, filter, and apply to positions seamlessly.
 
+
+Vercel link: 
+
 ## Features
 
 ### Admin Dashboard
