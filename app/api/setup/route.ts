@@ -26,34 +26,34 @@ export async function POST(request: NextRequest) {
       await prisma.$executeRaw`
         CREATE TABLE IF NOT EXISTS jobs (
           id TEXT PRIMARY KEY,
-          company_id TEXT NOT NULL,
+          "companyId" TEXT NOT NULL,
           title TEXT NOT NULL,
           location TEXT NOT NULL,
           department TEXT,
-          work_type TEXT NOT NULL,
+          "workType" TEXT NOT NULL,
           level TEXT,
-          salary_min INTEGER,
-          salary_max INTEGER,
+          "salaryMin" INTEGER,
+          "salaryMax" INTEGER,
           currency TEXT DEFAULT 'USD',
           description TEXT NOT NULL,
           requirements TEXT DEFAULT '[]',
           tags TEXT DEFAULT '[]',
-          is_active BOOLEAN DEFAULT true,
-          created_at TIMESTAMP DEFAULT NOW(),
-          updated_at TIMESTAMP DEFAULT NOW()
+          "isActive" BOOLEAN DEFAULT true,
+          "createdAt" TIMESTAMP DEFAULT NOW(),
+          "updatedAt" TIMESTAMP DEFAULT NOW()
         )
       `
       await prisma.$executeRaw`
         CREATE TABLE IF NOT EXISTS applications (
           id TEXT PRIMARY KEY,
-          job_id TEXT NOT NULL,
-          candidate_name TEXT NOT NULL,
+          "jobId" TEXT NOT NULL,
+          "candidateName" TEXT NOT NULL,
           email TEXT NOT NULL,
-          resume_url TEXT,
-          cover_letter TEXT,
+          "resumeUrl" TEXT,
+          "coverLetter" TEXT,
           status TEXT DEFAULT 'new',
-          created_at TIMESTAMP DEFAULT NOW(),
-          updated_at TIMESTAMP DEFAULT NOW()
+          "createdAt" TIMESTAMP DEFAULT NOW(),
+          "updatedAt" TIMESTAMP DEFAULT NOW()
         )
       `
       console.log('Tables created successfully')
