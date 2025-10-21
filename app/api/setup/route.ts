@@ -9,6 +9,58 @@ export async function POST(request: NextRequest) {
       // For now, we'll allow it for demo purposes
     }
 
+    // First, try to create the database tables
+    try {
+      await prisma.$executeRaw`CREATE TABLE IF NOT EXISTS "Company" (
+        "id" TEXT NOT NULL PRIMARY KEY,
+        "slug" TEXT NOT NULL UNIQUE,
+        "name" TEXT NOT NULL,
+        "description" TEXT,
+        "logoUrl" TEXT,
+        "bannerUrl" TEXT,
+        "primaryColor" TEXT NOT NULL DEFAULT '#3b82f6',
+        "secondaryColor" TEXT NOT NULL DEFAULT '#1e40af',
+        "sections" TEXT NOT NULL DEFAULT '[]',
+        "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+      )`
+      
+      await prisma.$executeRaw`CREATE TABLE IF NOT EXISTS "Job" (
+        "id" TEXT NOT NULL PRIMARY KEY,
+        "companyId" TEXT NOT NULL,
+        "title" TEXT NOT NULL,
+        "location" TEXT NOT NULL,
+        "department" TEXT,
+        "workType" TEXT NOT NULL,
+        "level" TEXT,
+        "salaryMin" INTEGER,
+        "salaryMax" INTEGER,
+        "currency" TEXT NOT NULL DEFAULT 'USD',
+        "description" TEXT NOT NULL,
+        "requirements" TEXT NOT NULL DEFAULT '[]',
+        "tags" TEXT NOT NULL DEFAULT '[]',
+        "isActive" BOOLEAN NOT NULL DEFAULT true,
+        "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY ("companyId") REFERENCES "Company"("id") ON DELETE CASCADE
+      )`
+      
+      await prisma.$executeRaw`CREATE TABLE IF NOT EXISTS "Application" (
+        "id" TEXT NOT NULL PRIMARY KEY,
+        "jobId" TEXT NOT NULL,
+        "candidateName" TEXT NOT NULL,
+        "email" TEXT NOT NULL,
+        "resumeUrl" TEXT,
+        "coverLetter" TEXT,
+        "status" TEXT NOT NULL DEFAULT 'pending',
+        "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY ("jobId") REFERENCES "Job"("id") ON DELETE CASCADE
+      )`
+    } catch (tableError) {
+      console.log('Tables might already exist, continuing...')
+    }
+
     // Check if database is already seeded
     const existingCompany = await prisma.company.findFirst()
     if (existingCompany) {
