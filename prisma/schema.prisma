@@ -6,8 +6,8 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model Company {
@@ -65,7 +65,6 @@ model Application {
   updatedAt   DateTime @updatedAt
 
   job    Job     @relation(fields: [jobId], references: [id], onDelete: Cascade)
-  company Company @relation(fields: [jobId], references: [id], onDelete: Cascade)
 
   @@map("applications")
 }
