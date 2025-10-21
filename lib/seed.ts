@@ -2,6 +2,11 @@ import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
+// Helper function to convert sections array to JSON string
+function sectionsToString(sections: any[]): string {
+  return JSON.stringify(sections)
+}
+
 async function main() {
   // Create sample company
   const company = await prisma.company.upsert({
@@ -15,7 +20,7 @@ async function main() {
       bannerUrl: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=1200&h=400&fit=crop&crop=center&auto=format&q=80',
       primaryColor: '#3b82f6',
       secondaryColor: '#1e40af',
-      sections: JSON.stringify([
+      sections: sectionsToString([
         {
           type: 'about',
           title: 'About ACME',
@@ -44,7 +49,7 @@ async function main() {
           order: 4,
           isActive: true
         }
-      ]) as string
+      ])
     }
   })
 
@@ -60,7 +65,7 @@ async function main() {
       bannerUrl: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1200&h=400&fit=crop&crop=center&auto=format&q=80',
       primaryColor: '#10b981',
       secondaryColor: '#059669',
-      sections: JSON.stringify([
+      sections: sectionsToString([
         {
           type: 'about',
           title: 'About TechFlow',
@@ -90,7 +95,7 @@ async function main() {
       bannerUrl: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&h=400&fit=crop&crop=center&auto=format&q=80',
       primaryColor: '#8b5cf6',
       secondaryColor: '#7c3aed',
-      sections: JSON.stringify([
+      sections: sectionsToString([
         {
           type: 'about',
           title: 'About DataVault',
@@ -120,7 +125,7 @@ async function main() {
       bannerUrl: 'https://images.unsplash.com/photo-1466611653911-95081537e5b7?w=1200&h=400&fit=crop&crop=center&auto=format&q=80',
       primaryColor: '#059669',
       secondaryColor: '#047857',
-      sections: JSON.stringify([
+      sections: sectionsToString([
         {
           type: 'about',
           title: 'About GreenEnergy',
