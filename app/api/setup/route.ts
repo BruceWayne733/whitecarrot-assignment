@@ -49,7 +49,20 @@ export async function POST(request: NextRequest) {
 export async function GET() {
   try {
     console.log('Testing database connection...')
-    console.log('DATABASE_URL format check:', process.env.DATABASE_URL?.substring(0, 20) + '...')
+    
+    // Check if DATABASE_URL exists
+    if (!process.env.DATABASE_URL) {
+      return NextResponse.json({
+        success: false,
+        error: 'DATABASE_URL environment variable is not set'
+      }, { status: 500 })
+    }
+    
+    // Check URL format
+    const url = process.env.DATABASE_URL
+    console.log('DATABASE_URL format check:', url.substring(0, 20) + '...')
+    console.log('URL starts with postgresql:', url.startsWith('postgresql://'))
+    console.log('URL starts with postgres:', url.startsWith('postgres://'))
     
     // Test basic database connection
     await prisma.$queryRaw`SELECT 1`
@@ -58,7 +71,8 @@ export async function GET() {
     return NextResponse.json({
       success: true,
       database: 'connected',
-      message: 'Database connection successful'
+      message: 'Database connection successful',
+      urlFormat: url.substring(0, 20) + '...'
     })
   } catch (error) {
     console.error('Database connection error:', error)
@@ -67,7 +81,9 @@ export async function GET() {
         success: false, 
         error: 'Database connection failed. Please check your DATABASE_URL environment variable.',
         details: error instanceof Error ? error.message : 'Unknown error',
-        urlFormat: process.env.DATABASE_URL?.substring(0, 20) + '...'
+        urlFormat: process.env.DATABASE_URL?.substring(0, 20) + '...',
+        urlStartsWithPostgresql: process.env.DATABASE_URL?.startsWith('postgresql://'),
+        urlStartsWithPostgres: process.env.DATABASE_URL?.startsWith('postgres://')
       },
       { status: 500 }
     )
