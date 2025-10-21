@@ -60,8 +60,13 @@ export async function GET() {
       jobs: jobCount
     })
   } catch (error) {
+    console.error('Database connection error:', error)
     return NextResponse.json(
-      { success: false, error: 'Database connection failed' },
+      { 
+        success: false, 
+        error: 'Database connection failed. Please check your DATABASE_URL environment variable.',
+        details: error instanceof Error ? error.message : 'Unknown error'
+      },
       { status: 500 }
     )
   }
