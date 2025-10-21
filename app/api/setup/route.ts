@@ -49,6 +49,7 @@ export async function POST(request: NextRequest) {
 export async function GET() {
   try {
     console.log('Testing database connection...')
+    console.log('DATABASE_URL format check:', process.env.DATABASE_URL?.substring(0, 20) + '...')
     
     // Test basic database connection
     await prisma.$queryRaw`SELECT 1`
@@ -65,7 +66,8 @@ export async function GET() {
       { 
         success: false, 
         error: 'Database connection failed. Please check your DATABASE_URL environment variable.',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
+        urlFormat: process.env.DATABASE_URL?.substring(0, 20) + '...'
       },
       { status: 500 }
     )
