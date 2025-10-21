@@ -40,7 +40,10 @@ export async function PATCH(
     if (error instanceof Error && error.name === 'ZodError') {
       return NextResponse.json({ error: 'Validation failed', details: error.message }, { status: 400 })
     }
-    return NextResponse.json({ error: 'Failed to update job', details: error.message }, { status: 500 })
+    return NextResponse.json({ 
+      error: 'Failed to update job', 
+      details: error instanceof Error ? error.message : 'Unknown error' 
+    }, { status: 500 })
   }
 }
 
