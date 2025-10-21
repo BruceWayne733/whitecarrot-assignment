@@ -319,7 +319,7 @@ export default function AdminJobsPage() {
                     {job.description}
                   </p>
                   <div className="flex flex-wrap gap-1">
-                    {(Array.isArray(job.tags) ? job.tags : JSON.parse(job.tags || '[]')).map((tag, index) => (
+                    {(Array.isArray(job.tags) ? job.tags : JSON.parse(job.tags || '[]')).map((tag: string, index: number) => (
                       <Badge key={index} variant="outline" className="text-xs">
                         {tag}
                       </Badge>
