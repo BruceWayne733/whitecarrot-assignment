@@ -24,7 +24,6 @@ model Company {
   updatedAt     DateTime @updatedAt
 
   jobs Job[]
-  applications Application[]
 
   @@map("companies")
 }
