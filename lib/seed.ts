@@ -44,7 +44,7 @@ async function main() {
           order: 4,
           isActive: true
         }
-      ])
+      ]) as string
     }
   })
 
@@ -75,7 +75,7 @@ async function main() {
           order: 2,
           isActive: true
         }
-      ])
+      ]) as string
     }
   })
 
@@ -105,7 +105,7 @@ async function main() {
           order: 2,
           isActive: true
         }
-      ])
+      ]) as string
     }
   })
 
@@ -135,7 +135,7 @@ async function main() {
           order: 2,
           isActive: true
         }
-      ])
+      ]) as string
     }
   })
 
