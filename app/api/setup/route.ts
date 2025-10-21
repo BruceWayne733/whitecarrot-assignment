@@ -3,34 +3,19 @@ import { prisma } from '@/lib/db'
 
 export async function POST(request: NextRequest) {
   try {
-    // Check if this is a production environment
-    if (process.env.NODE_ENV === 'production') {
-      // In production, you might want to add additional security checks
-      // For now, we'll allow it for demo purposes
-    }
-
-    // First, try to create the database tables using Prisma's built-in migration
-    try {
-      // Use Prisma's push command to create tables
-      const { exec } = require('child_process')
-      const { promisify } = require('util')
-      const execAsync = promisify(exec)
-      
-      console.log('Creating database tables...')
-      await execAsync('npx prisma db push --accept-data-loss')
-      console.log('Database tables created successfully')
-    } catch (tableError) {
-      console.log('Tables might already exist or creation failed, continuing...', tableError)
-      // Don't fail the entire process if table creation fails
-    }
-
+    console.log('Starting database setup...')
+    
     // Check if database is already seeded
-    const existingCompany = await prisma.company.findFirst()
-    if (existingCompany) {
-      return NextResponse.json({ 
-        success: true, 
-        message: 'Database already seeded' 
-      })
+    try {
+      const existingCompany = await prisma.company.findFirst()
+      if (existingCompany) {
+        return NextResponse.json({ 
+          success: true, 
+          message: 'Database already seeded' 
+        })
+      }
+    } catch (error) {
+      console.log('Tables might not exist yet, will create them during seeding')
     }
 
     // Run the seed script
@@ -39,6 +24,7 @@ export async function POST(request: NextRequest) {
     const execAsync = promisify(exec)
 
     try {
+      console.log('Running seed script...')
       await execAsync('npx tsx lib/seed.ts')
       return NextResponse.json({ 
         success: true, 
@@ -47,14 +33,14 @@ export async function POST(request: NextRequest) {
     } catch (error) {
       console.error('Seed error:', error)
       return NextResponse.json(
-        { success: false, error: 'Failed to seed database' },
+        { success: false, error: 'Failed to seed database: ' + (error instanceof Error ? error.message : 'Unknown error') },
         { status: 500 }
       )
     }
   } catch (error) {
     console.error('Setup error:', error)
     return NextResponse.json(
-      { success: false, error: 'Setup failed' },
+      { success: false, error: 'Setup failed: ' + (error instanceof Error ? error.message : 'Unknown error') },
       { status: 500 }
     )
   }
