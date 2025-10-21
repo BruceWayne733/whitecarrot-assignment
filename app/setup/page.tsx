@@ -82,18 +82,11 @@ export default function SetupPage() {
             {status === 'success' && (
               <Button 
                 onClick={seedDatabase} 
-                disabled={status === 'seeding'}
+                disabled={false}
                 className="w-full"
                 variant="outline"
               >
-                {status === 'seeding' ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Seeding Database...
-                  </>
-                ) : (
-                  'Seed Database'
-                )}
+                Seed Database
               </Button>
             )}
           </div>
