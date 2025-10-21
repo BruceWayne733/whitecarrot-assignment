@@ -5,72 +5,64 @@ export async function POST(request: NextRequest) {
   try {
     console.log('Starting database setup...')
     
-    // First, try to push the schema to create tables
+    // Create tables manually (skip Prisma push due to npm issues)
     try {
-      console.log('Pushing Prisma schema...')
-      const { exec } = require('child_process')
-      const { promisify } = require('util')
-      const execAsync = promisify(exec)
-      
-      await execAsync('npx prisma db push --accept-data-loss')
-      console.log('Schema pushed successfully')
+      console.log('Creating tables manually...')
+      await prisma.$executeRaw`
+        CREATE TABLE IF NOT EXISTS companies (
+          id TEXT PRIMARY KEY,
+          slug TEXT UNIQUE NOT NULL,
+          name TEXT NOT NULL,
+          description TEXT,
+          logo_url TEXT,
+          banner_url TEXT,
+          primary_color TEXT DEFAULT '#3b82f6',
+          secondary_color TEXT DEFAULT '#1e40af',
+          sections TEXT DEFAULT '[]',
+          created_at TIMESTAMP DEFAULT NOW(),
+          updated_at TIMESTAMP DEFAULT NOW()
+        )
+      `
+      await prisma.$executeRaw`
+        CREATE TABLE IF NOT EXISTS jobs (
+          id TEXT PRIMARY KEY,
+          company_id TEXT NOT NULL,
+          title TEXT NOT NULL,
+          location TEXT NOT NULL,
+          department TEXT,
+          work_type TEXT NOT NULL,
+          level TEXT,
+          salary_min INTEGER,
+          salary_max INTEGER,
+          currency TEXT DEFAULT 'USD',
+          description TEXT NOT NULL,
+          requirements TEXT DEFAULT '[]',
+          tags TEXT DEFAULT '[]',
+          is_active BOOLEAN DEFAULT true,
+          created_at TIMESTAMP DEFAULT NOW(),
+          updated_at TIMESTAMP DEFAULT NOW()
+        )
+      `
+      await prisma.$executeRaw`
+        CREATE TABLE IF NOT EXISTS applications (
+          id TEXT PRIMARY KEY,
+          job_id TEXT NOT NULL,
+          candidate_name TEXT NOT NULL,
+          email TEXT NOT NULL,
+          resume_url TEXT,
+          cover_letter TEXT,
+          status TEXT DEFAULT 'new',
+          created_at TIMESTAMP DEFAULT NOW(),
+          updated_at TIMESTAMP DEFAULT NOW()
+        )
+      `
+      console.log('Tables created successfully')
     } catch (error) {
-      console.error('Schema push error:', error)
-      // Try to create tables manually if Prisma push fails
-      try {
-        console.log('Trying to create tables manually...')
-        await prisma.$executeRaw`
-          CREATE TABLE IF NOT EXISTS companies (
-            id TEXT PRIMARY KEY,
-            slug TEXT UNIQUE NOT NULL,
-            name TEXT NOT NULL,
-            description TEXT,
-            logo_url TEXT,
-            banner_url TEXT,
-            primary_color TEXT DEFAULT '#3b82f6',
-            secondary_color TEXT DEFAULT '#1e40af',
-            sections TEXT DEFAULT '[]',
-            created_at TIMESTAMP DEFAULT NOW(),
-            updated_at TIMESTAMP DEFAULT NOW()
-          )
-        `
-        await prisma.$executeRaw`
-          CREATE TABLE IF NOT EXISTS jobs (
-            id TEXT PRIMARY KEY,
-            company_id TEXT NOT NULL,
-            title TEXT NOT NULL,
-            location TEXT NOT NULL,
-            department TEXT,
-            work_type TEXT NOT NULL,
-            level TEXT,
-            salary_min INTEGER,
-            salary_max INTEGER,
-            currency TEXT DEFAULT 'USD',
-            description TEXT NOT NULL,
-            requirements TEXT DEFAULT '[]',
-            tags TEXT DEFAULT '[]',
-            is_active BOOLEAN DEFAULT true,
-            created_at TIMESTAMP DEFAULT NOW(),
-            updated_at TIMESTAMP DEFAULT NOW()
-          )
-        `
-        await prisma.$executeRaw`
-          CREATE TABLE IF NOT EXISTS applications (
-            id TEXT PRIMARY KEY,
-            job_id TEXT NOT NULL,
-            candidate_name TEXT NOT NULL,
-            email TEXT NOT NULL,
-            resume_url TEXT,
-            cover_letter TEXT,
-            status TEXT DEFAULT 'new',
-            created_at TIMESTAMP DEFAULT NOW(),
-            updated_at TIMESTAMP DEFAULT NOW()
-          )
-        `
-        console.log('Tables created manually')
-      } catch (manualError) {
-        console.error('Manual table creation failed:', manualError)
-      }
+      console.error('Table creation error:', error)
+      return NextResponse.json(
+        { success: false, error: 'Failed to create tables: ' + (error instanceof Error ? error.message : 'Unknown error') },
+        { status: 500 }
+      )
     }
     
     // Check if database is already seeded
