@@ -48,27 +48,16 @@ export async function POST(request: NextRequest) {
 
 export async function GET() {
   try {
-    // First, try a simple connection test
+    console.log('Testing database connection...')
+    
+    // Test basic database connection
     await prisma.$queryRaw`SELECT 1`
-    
-    // Try to get table counts, but don't fail if tables don't exist yet
-    let companyCount = 0
-    let jobCount = 0
-    
-    try {
-      companyCount = await prisma.company.count()
-      jobCount = await prisma.job.count()
-    } catch (tableError) {
-      // Tables don't exist yet, that's okay
-      console.log('Tables not created yet, will create them during seeding')
-    }
+    console.log('Database connection successful')
     
     return NextResponse.json({
       success: true,
       database: 'connected',
-      companies: companyCount,
-      jobs: jobCount,
-      message: companyCount === 0 ? 'Database connected but not seeded yet' : 'Database connected and ready'
+      message: 'Database connection successful'
     })
   } catch (error) {
     console.error('Database connection error:', error)
