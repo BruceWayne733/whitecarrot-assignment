@@ -16,10 +16,12 @@ export async function POST(request: NextRequest) {
       const { promisify } = require('util')
       const execAsync = promisify(exec)
       
-      await execAsync('npx prisma db push --force-reset')
+      console.log('Creating database tables...')
+      await execAsync('npx prisma db push --accept-data-loss')
       console.log('Database tables created successfully')
     } catch (tableError) {
-      console.log('Tables might already exist, continuing...')
+      console.log('Tables might already exist or creation failed, continuing...', tableError)
+      // Don't fail the entire process if table creation fails
     }
 
     // Check if database is already seeded
@@ -60,17 +62,27 @@ export async function POST(request: NextRequest) {
 
 export async function GET() {
   try {
-    // Check database connection
+    // First, try a simple connection test
     await prisma.$queryRaw`SELECT 1`
     
-    const companyCount = await prisma.company.count()
-    const jobCount = await prisma.job.count()
+    // Try to get table counts, but don't fail if tables don't exist yet
+    let companyCount = 0
+    let jobCount = 0
+    
+    try {
+      companyCount = await prisma.company.count()
+      jobCount = await prisma.job.count()
+    } catch (tableError) {
+      // Tables don't exist yet, that's okay
+      console.log('Tables not created yet, will create them during seeding')
+    }
     
     return NextResponse.json({
       success: true,
       database: 'connected',
       companies: companyCount,
-      jobs: jobCount
+      jobs: jobCount,
+      message: companyCount === 0 ? 'Database connected but not seeded yet' : 'Database connected and ready'
     })
   } catch (error) {
     console.error('Database connection error:', error)
