@@ -81,13 +81,9 @@ export default function CareersPage({ params }: { params: { slug: string } }) {
     }
   }
 
-  useEffect(() => {
-    fetchCompanyAndJobs()
-  }, [fetchCompanyAndJobs])
+  
 
-  useEffect(() => {
-    filterJobs()
-  }, [filterJobs])
+  
 
   const fetchCompanyAndJobs = useCallback(async () => {
     try {
@@ -121,6 +117,10 @@ export default function CareersPage({ params }: { params: { slug: string } }) {
     }
   }, [params.slug])
 
+  useEffect(() => {
+    fetchCompanyAndJobs()
+  }, [fetchCompanyAndJobs])
+
   const filterJobs = useCallback(() => {
     let filtered = jobs
 
@@ -129,7 +129,7 @@ export default function CareersPage({ params }: { params: { slug: string } }) {
       filtered = filtered.filter(job =>
         job.title.toLowerCase().includes(searchLower) ||
         job.description.toLowerCase().includes(searchLower) ||
-        job.tags.some(tag => tag.toLowerCase().includes(searchLower))
+        (Array.isArray(job.tags) ? job.tags : JSON.parse(job.tags || '[]')).some((tag: string) => tag.toLowerCase().includes(searchLower))
       )
     }
 
@@ -155,6 +155,10 @@ export default function CareersPage({ params }: { params: { slug: string } }) {
 
     setFilteredJobs(filtered)
   }, [jobs, filters])
+
+  useEffect(() => {
+    filterJobs()
+  }, [filterJobs])
 
   const handleApply = (job: Job) => {
     setSelectedJob(job)
@@ -232,8 +236,8 @@ export default function CareersPage({ params }: { params: { slug: string } }) {
   }
 
   const activeSections = getSections()
-    .filter(section => section.isActive)
-    .sort((a, b) => a.order - b.order)
+    .filter((section: any) => section.isActive)
+    .sort((a: any, b: any) => a.order - b.order)
 
   return (
     <div className="min-h-screen bg-white">
@@ -272,7 +276,7 @@ export default function CareersPage({ params }: { params: { slug: string } }) {
       </div>
 
       {/* Content Sections */}
-      {activeSections.map((section, index) => (
+      {activeSections.map((section: any, index: number) => (
         <div key={index} className="py-16 px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-3xl font-bold text-gray-900 mb-6 text-center">
@@ -383,7 +387,7 @@ export default function CareersPage({ params }: { params: { slug: string } }) {
                         {job.description}
                       </p>
                       <div className="flex flex-wrap gap-1 mb-4">
-                        {(Array.isArray(job.tags) ? job.tags : JSON.parse(job.tags || '[]')).map((tag, index) => (
+                        {(Array.isArray(job.tags) ? job.tags : JSON.parse(job.tags || '[]')).map((tag: string, index: number) => (
                           <Badge key={index} variant="secondary" className="text-xs">
                             {tag}
                           </Badge>
