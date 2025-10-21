@@ -15,7 +15,7 @@ async function main() {
       bannerUrl: 'https://via.placeholder.com/1200x400/1e40af/ffffff?text=Join+Our+Team',
       primaryColor: '#3b82f6',
       secondaryColor: '#1e40af',
-      sections: [
+      sections: JSON.stringify([
         {
           type: 'about',
           title: 'About ACME',
@@ -44,7 +44,7 @@ async function main() {
           order: 4,
           isActive: true
         }
-      ]
+      ])
     }
   })
 
@@ -60,14 +60,14 @@ async function main() {
       salaryMax: 160000,
       currency: 'USD',
       description: 'We are looking for a Senior Software Engineer to join our core platform team. You will be responsible for designing and implementing scalable solutions that power our main product.',
-      requirements: [
+      requirements: JSON.stringify([
         '5+ years of software development experience',
         'Strong proficiency in React, Node.js, and TypeScript',
         'Experience with cloud platforms (AWS, GCP, or Azure)',
         'Knowledge of database design and optimization',
         'Experience with microservices architecture'
-      ],
-      tags: ['React', 'Node.js', 'TypeScript', 'AWS', 'Microservices'],
+      ]),
+      tags: JSON.stringify(['React', 'Node.js', 'TypeScript', 'AWS', 'Microservices']),
       isActive: true
     },
     {
@@ -80,14 +80,14 @@ async function main() {
       salaryMax: 130000,
       currency: 'USD',
       description: 'Join our product team as a Product Manager and help shape the future of our platform. You will work closely with engineering, design, and business teams to deliver exceptional user experiences.',
-      requirements: [
+      requirements: JSON.stringify([
         '3+ years of product management experience',
         'Strong analytical and problem-solving skills',
         'Experience with user research and data analysis',
         'Excellent communication and collaboration skills',
         'Technical background preferred'
-      ],
-      tags: ['Product Management', 'User Research', 'Analytics', 'Strategy'],
+      ]),
+      tags: JSON.stringify(['Product Management', 'User Research', 'Analytics', 'Strategy']),
       isActive: true
     },
     {
@@ -100,14 +100,14 @@ async function main() {
       salaryMax: 110000,
       currency: 'USD',
       description: 'We are seeking a talented UX Designer to join our design team. You will be responsible for creating intuitive and engaging user experiences across our product suite.',
-      requirements: [
+      requirements: JSON.stringify([
         '3+ years of UX design experience',
         'Proficiency in Figma, Sketch, or similar design tools',
         'Strong portfolio demonstrating user-centered design',
         'Experience with user research and usability testing',
         'Knowledge of design systems and accessibility'
-      ],
-      tags: ['UX Design', 'Figma', 'User Research', 'Design Systems'],
+      ]),
+      tags: JSON.stringify(['UX Design', 'Figma', 'User Research', 'Design Systems']),
       isActive: true
     },
     {
@@ -120,14 +120,14 @@ async function main() {
       salaryMax: 150000,
       currency: 'USD',
       description: 'Join our data science team to help us extract insights from our vast datasets and build machine learning models that drive business decisions.',
-      requirements: [
+      requirements: JSON.stringify([
         '4+ years of data science experience',
         'Strong programming skills in Python and R',
         'Experience with machine learning frameworks',
         'Knowledge of SQL and data warehousing',
         'Advanced degree in quantitative field preferred'
-      ],
-      tags: ['Python', 'Machine Learning', 'SQL', 'Statistics'],
+      ]),
+      tags: JSON.stringify(['Python', 'Machine Learning', 'SQL', 'Statistics']),
       isActive: true
     },
     {
@@ -140,14 +140,14 @@ async function main() {
       salaryMax: 95000,
       currency: 'USD',
       description: 'We are looking for a Marketing Manager to lead our digital marketing efforts and help grow our brand presence in the market.',
-      requirements: [
+      requirements: JSON.stringify([
         '3+ years of marketing experience',
         'Experience with digital marketing channels',
         'Strong analytical and creative skills',
         'Knowledge of marketing automation tools',
         'Excellent written and verbal communication'
-      ],
-      tags: ['Digital Marketing', 'Content Marketing', 'Analytics', 'Brand'],
+      ]),
+      tags: JSON.stringify(['Digital Marketing', 'Content Marketing', 'Analytics', 'Brand']),
       isActive: true
     },
     {
@@ -160,14 +160,14 @@ async function main() {
       salaryMax: 140000,
       currency: 'USD',
       description: 'Join our DevOps team to help us build and maintain our cloud infrastructure, ensuring high availability and scalability of our services.',
-      requirements: [
+      requirements: JSON.stringify([
         '4+ years of DevOps experience',
         'Strong knowledge of AWS, Docker, and Kubernetes',
         'Experience with CI/CD pipelines',
         'Knowledge of infrastructure as code',
         'Strong scripting skills (Bash, Python)'
-      ],
-      tags: ['AWS', 'Docker', 'Kubernetes', 'CI/CD', 'Infrastructure'],
+      ]),
+      tags: JSON.stringify(['AWS', 'Docker', 'Kubernetes', 'CI/CD', 'Infrastructure']),
       isActive: true
     },
     {
@@ -180,14 +180,14 @@ async function main() {
       salaryMax: 70000,
       currency: 'USD',
       description: 'We are seeking a motivated Sales Representative to join our growing sales team and help us expand our customer base.',
-      requirements: [
+      requirements: JSON.stringify([
         '1+ years of sales experience',
         'Strong communication and interpersonal skills',
         'Goal-oriented and self-motivated',
         'Experience with CRM systems preferred',
         'Bachelor\'s degree preferred'
-      ],
-      tags: ['Sales', 'CRM', 'Communication', 'B2B'],
+      ]),
+      tags: JSON.stringify(['Sales', 'CRM', 'Communication', 'B2B']),
       isActive: true
     },
     {
@@ -200,14 +200,14 @@ async function main() {
       salaryMax: 85000,
       currency: 'USD',
       description: 'Join our customer success team to help our clients achieve their goals and ensure high satisfaction with our products and services.',
-      requirements: [
+      requirements: JSON.stringify([
         '2+ years of customer success experience',
         'Strong problem-solving and communication skills',
         'Experience with customer support tools',
         'Technical background preferred',
         'Passion for helping customers succeed'
-      ],
-      tags: ['Customer Success', 'Support', 'Account Management', 'SaaS'],
+      ]),
+      tags: JSON.stringify(['Customer Success', 'Support', 'Account Management', 'SaaS']),
       isActive: true
     }
   ]
