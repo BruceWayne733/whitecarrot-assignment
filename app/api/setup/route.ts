@@ -5,6 +5,20 @@ export async function POST(request: NextRequest) {
   try {
     console.log('Starting database setup...')
     
+    // First, try to push the schema to create tables
+    try {
+      console.log('Pushing Prisma schema...')
+      const { exec } = require('child_process')
+      const { promisify } = require('util')
+      const execAsync = promisify(exec)
+      
+      await execAsync('npx prisma db push --accept-data-loss')
+      console.log('Schema pushed successfully')
+    } catch (error) {
+      console.error('Schema push error:', error)
+      // Continue anyway, might work with existing tables
+    }
+    
     // Check if database is already seeded
     try {
       const existingCompany = await prisma.company.findFirst()
