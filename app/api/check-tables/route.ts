@@ -11,13 +11,13 @@ export async function GET() {
     `
     
     // Check column structure of jobs table
-    let jobColumns = []
+    let jobColumns: any[] = []
     try {
       jobColumns = await prisma.$queryRaw`
         SELECT column_name, data_type 
         FROM information_schema.columns 
         WHERE table_name = 'jobs' AND table_schema = 'public'
-      `
+      ` as any[]
     } catch (error) {
       console.log('Could not get job columns:', error)
     }
