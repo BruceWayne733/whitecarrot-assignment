@@ -10,27 +10,48 @@ export async function GET() {
       WHERE table_schema = 'public'
     `
     
+    // Check column structure of jobs table
+    let jobColumns = []
+    try {
+      jobColumns = await prisma.$queryRaw`
+        SELECT column_name, data_type 
+        FROM information_schema.columns 
+        WHERE table_name = 'jobs' AND table_schema = 'public'
+      `
+    } catch (error) {
+      console.log('Could not get job columns:', error)
+    }
+    
     // Try to count records in each table
     let companyCount = 0
     let jobCount = 0
+    let applicationCount = 0
     
     try {
       companyCount = await prisma.company.count()
     } catch (error) {
-      console.log('Company table does not exist or has issues')
+      console.log('Company table error:', error)
     }
     
     try {
       jobCount = await prisma.job.count()
     } catch (error) {
-      console.log('Job table does not exist or has issues')
+      console.log('Job table error:', error)
+    }
+    
+    try {
+      applicationCount = await prisma.application.count()
+    } catch (error) {
+      console.log('Application table error:', error)
     }
     
     return NextResponse.json({
       success: true,
       tables: tables,
+      jobColumns: jobColumns,
       companyCount,
       jobCount,
+      applicationCount,
       message: 'Database tables checked'
     })
   } catch (error) {
