@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
+import Image from 'next/image'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -82,13 +83,13 @@ export default function CareersPage({ params }: { params: { slug: string } }) {
 
   useEffect(() => {
     fetchCompanyAndJobs()
-  }, [params.slug])
+  }, [fetchCompanyAndJobs])
 
   useEffect(() => {
     filterJobs()
-  }, [jobs, filters])
+  }, [filterJobs])
 
-  const fetchCompanyAndJobs = async () => {
+  const fetchCompanyAndJobs = useCallback(async () => {
     try {
       const [companyResponse, jobsResponse] = await Promise.all([
         fetch('/api/admin/company'),
@@ -118,9 +119,9 @@ export default function CareersPage({ params }: { params: { slug: string } }) {
     } finally {
       setLoading(false)
     }
-  }
+  }, [params.slug])
 
-  const filterJobs = () => {
+  const filterJobs = useCallback(() => {
     let filtered = jobs
 
     if (filters.search) {
@@ -153,7 +154,7 @@ export default function CareersPage({ params }: { params: { slug: string } }) {
     }
 
     setFilteredJobs(filtered)
-  }
+  }, [jobs, filters])
 
   const handleApply = (job: Job) => {
     setSelectedJob(job)
@@ -224,7 +225,7 @@ export default function CareersPage({ params }: { params: { slug: string } }) {
       <div className="flex justify-center items-center h-64">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Company Not Found</h1>
-          <p className="text-gray-600">The careers page you're looking for doesn't exist.</p>
+          <p className="text-gray-600">The careers page you&apos;re looking for doesn&apos;t exist.</p>
         </div>
       </div>
     )
@@ -250,9 +251,11 @@ export default function CareersPage({ params }: { params: { slug: string } }) {
         <div className="relative max-w-7xl mx-auto text-center">
           <div className="flex justify-center mb-6">
             {company.logoUrl && (
-              <img 
+              <Image 
                 src={company.logoUrl} 
                 alt={`${company.name} logo`}
+                width={64}
+                height={64}
                 className="h-16 w-auto"
               />
             )}

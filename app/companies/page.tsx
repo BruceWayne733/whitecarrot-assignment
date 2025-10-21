@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -147,9 +148,11 @@ export default function CompaniesPage() {
                     <div className="flex items-start justify-between">
                       <div className="flex items-center space-x-4">
                         {company.logoUrl && (
-                          <img
+                          <Image
                             src={company.logoUrl}
                             alt={`${company.name} logo`}
+                            width={48}
+                            height={48}
                             className="w-12 h-12 object-contain rounded"
                           />
                         )}

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -257,9 +258,11 @@ export default function AdminBrandPage() {
                 </div>
                 {logoPreview && (
                   <div className="mt-2">
-                    <img
+                    <Image
                       src={logoPreview}
                       alt="Logo preview"
+                      width={128}
+                      height={64}
                       className="w-32 h-16 object-contain border rounded"
                     />
                   </div>
@@ -299,9 +302,11 @@ export default function AdminBrandPage() {
                 </div>
                 {bannerPreview && (
                   <div className="mt-2">
-                    <img
+                    <Image
                       src={bannerPreview}
                       alt="Banner preview"
+                      width={400}
+                      height={128}
                       className="w-full h-32 object-cover border rounded"
                     />
                   </div>
@@ -386,9 +391,11 @@ export default function AdminBrandPage() {
             >
               <div className="flex items-center space-x-4">
                 {formData.logoUrl && (
-                  <img 
+                  <Image 
                     src={formData.logoUrl} 
                     alt="Logo" 
+                    width={48}
+                    height={48}
                     className="h-12 w-auto"
                   />
                 )}
