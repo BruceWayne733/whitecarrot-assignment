@@ -5,26 +5,35 @@ export async function POST(request: NextRequest) {
   try {
     console.log('Starting database setup...')
     
-    // Create tables manually (skip Prisma push due to npm issues)
+    // Drop and recreate tables with correct structure
     try {
-      console.log('Creating tables manually...')
+      console.log('Dropping and recreating tables...')
+      
+      // Drop tables if they exist (in correct order due to foreign keys)
+      await prisma.$executeRaw`DROP TABLE IF EXISTS applications CASCADE`
+      await prisma.$executeRaw`DROP TABLE IF EXISTS jobs CASCADE`
+      await prisma.$executeRaw`DROP TABLE IF EXISTS companies CASCADE`
+      
+      // Create companies table
       await prisma.$executeRaw`
-        CREATE TABLE IF NOT EXISTS companies (
+        CREATE TABLE companies (
           id TEXT PRIMARY KEY,
           slug TEXT UNIQUE NOT NULL,
           name TEXT NOT NULL,
           description TEXT,
-          logo_url TEXT,
-          banner_url TEXT,
-          primary_color TEXT DEFAULT '#3b82f6',
-          secondary_color TEXT DEFAULT '#1e40af',
+          "logoUrl" TEXT,
+          "bannerUrl" TEXT,
+          "primaryColor" TEXT DEFAULT '#3b82f6',
+          "secondaryColor" TEXT DEFAULT '#1e40af',
           sections TEXT DEFAULT '[]',
-          created_at TIMESTAMP DEFAULT NOW(),
-          updated_at TIMESTAMP DEFAULT NOW()
+          "createdAt" TIMESTAMP DEFAULT NOW(),
+          "updatedAt" TIMESTAMP DEFAULT NOW()
         )
       `
+      
+      // Create jobs table
       await prisma.$executeRaw`
-        CREATE TABLE IF NOT EXISTS jobs (
+        CREATE TABLE jobs (
           id TEXT PRIMARY KEY,
           "companyId" TEXT NOT NULL,
           title TEXT NOT NULL,
@@ -43,8 +52,10 @@ export async function POST(request: NextRequest) {
           "updatedAt" TIMESTAMP DEFAULT NOW()
         )
       `
+      
+      // Create applications table
       await prisma.$executeRaw`
-        CREATE TABLE IF NOT EXISTS applications (
+        CREATE TABLE applications (
           id TEXT PRIMARY KEY,
           "jobId" TEXT NOT NULL,
           "candidateName" TEXT NOT NULL,
@@ -56,6 +67,7 @@ export async function POST(request: NextRequest) {
           "updatedAt" TIMESTAMP DEFAULT NOW()
         )
       `
+      
       console.log('Tables created successfully')
     } catch (error) {
       console.error('Table creation error:', error)
@@ -78,17 +90,90 @@ export async function POST(request: NextRequest) {
       console.log('Tables might not exist yet, will create them during seeding')
     }
 
-    // Run the seed script
-    const { exec } = require('child_process')
-    const { promisify } = require('util')
-    const execAsync = promisify(exec)
-
+    // Seed the database directly
     try {
-      console.log('Running seed script...')
-      await execAsync('npx tsx lib/seed.ts')
+      console.log('Seeding database...')
+      
+      // Create sample company
+      const company = await prisma.company.create({
+        data: {
+          slug: 'acme',
+          name: 'ACME Corporation',
+          description: 'Leading technology company focused on innovation and growth',
+          logoUrl: 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=200&h=100&fit=crop&crop=center&auto=format&q=80',
+          bannerUrl: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=1200&h=400&fit=crop&crop=center&auto=format&q=80',
+          primaryColor: '#3b82f6',
+          secondaryColor: '#1e40af',
+          sections: JSON.stringify([
+            {
+              type: 'about',
+              title: 'About ACME',
+              content: 'We are a forward-thinking technology company dedicated to creating innovative solutions that make a difference in the world.',
+              order: 1,
+              isActive: true
+            },
+            {
+              type: 'benefits',
+              title: 'Why Work With Us',
+              content: '• Competitive salary and equity\n• Comprehensive health insurance\n• Flexible work arrangements\n• Professional development opportunities',
+              order: 2,
+              isActive: true
+            }
+          ])
+        }
+      })
+      
+      // Create sample jobs
+      const jobs = [
+        {
+          companyId: company.id,
+          title: 'Senior Software Engineer',
+          location: 'Remote',
+          department: 'Engineering',
+          workType: 'remote',
+          level: 'senior',
+          salaryMin: 120000,
+          salaryMax: 180000,
+          currency: 'USD',
+          description: 'We are looking for a Senior Software Engineer to join our core platform team.',
+          requirements: JSON.stringify([
+            '5+ years of software development experience',
+            'Strong proficiency in React, Node.js, and TypeScript',
+            'Experience with cloud platforms (AWS, GCP, or Azure)'
+          ]),
+          tags: JSON.stringify(['React', 'Node.js', 'TypeScript', 'AWS']),
+          isActive: true
+        },
+        {
+          companyId: company.id,
+          title: 'Product Manager',
+          location: 'San Francisco, CA',
+          department: 'Product',
+          workType: 'on-site',
+          level: 'mid',
+          salaryMin: 100000,
+          salaryMax: 150000,
+          currency: 'USD',
+          description: 'Join our product team to help shape the future of our platform.',
+          requirements: JSON.stringify([
+            '3+ years of product management experience',
+            'Strong analytical and communication skills',
+            'Experience with agile development processes'
+          ]),
+          tags: JSON.stringify(['Product Management', 'Analytics', 'Agile']),
+          isActive: true
+        }
+      ]
+      
+      for (const jobData of jobs) {
+        await prisma.job.create({ data: jobData })
+      }
+      
       return NextResponse.json({ 
         success: true, 
-        message: 'Database seeded successfully' 
+        message: 'Database seeded successfully',
+        company: company.name,
+        jobs: jobs.length
       })
     } catch (error) {
       console.error('Seed error:', error)
