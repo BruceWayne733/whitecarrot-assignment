@@ -78,8 +78,14 @@ export async function GET() {
     console.log('URL starts with postgresql:', url.startsWith('postgresql://'))
     console.log('URL starts with postgres:', url.startsWith('postgres://'))
     
-    // Test basic database connection
-    await prisma.$queryRaw`SELECT 1`
+    // Try to connect with a timeout
+    const timeoutPromise = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error('Connection timeout')), 10000)
+    )
+    
+    const connectionPromise = prisma.$queryRaw`SELECT 1`
+    
+    await Promise.race([connectionPromise, timeoutPromise])
     console.log('Database connection successful')
     
     return NextResponse.json({
@@ -93,11 +99,12 @@ export async function GET() {
     return NextResponse.json(
       { 
         success: false, 
-        error: 'Database connection failed. Please check your DATABASE_URL environment variable.',
+        error: 'Database connection failed. This might be a network issue or the database is not ready yet.',
         details: error instanceof Error ? error.message : 'Unknown error',
         urlFormat: process.env.DATABASE_URL?.substring(0, 20) + '...',
         urlStartsWithPostgresql: process.env.DATABASE_URL?.startsWith('postgresql://'),
-        urlStartsWithPostgres: process.env.DATABASE_URL?.startsWith('postgres://')
+        urlStartsWithPostgres: process.env.DATABASE_URL?.startsWith('postgres://'),
+        suggestion: 'Try waiting a few minutes for the database to fully initialize, or check your Supabase dashboard for any issues.'
       },
       { status: 500 }
     )
